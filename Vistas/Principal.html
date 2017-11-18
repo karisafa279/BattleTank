@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <script type="text/javascript" src="../JS/Script.js"></script>
+        <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <title>Battle Tank</title>
+    </head>
+    
+    <body>
+        
+        
+        <canvas id = "lienzo" width ="1200" height="600"></canvas>
+        
+        
+
+        
+<script>
+
+var canvas,context;
+
+var v1,v2,v3,v4,v5,v6,vx = [400,435,470,900,935,970], vy = 110 , contV1 =0,contV2 =0;
+
+var pos_x1 =400,pos_y1 =300,tanq1,Dx = [],Dy = [],Dd = [];
+var dirtanq1= 1,conttanq1 = 0;
+
+var pos_x2 =950,pos_y2 =  300,tanq2;
+var dirtanq2 = 2,conttanq2 = 0;
+
+var bala;
+var movimiento = [],i = 0,k=0;
+
+
+	window.onload=function(){
+		
+		canvas = document.getElementById('lienzo');
+    	context = canvas.getContext('2d');
+    	
+    	v1 = new Image();
+    	v1.src = "../Imagenes/Corazon.png"; 
+    	
+    	v2 = new Image();
+    	v2.src = "../Imagenes/Corazon.png"; 
+    	
+    	v3 = new Image();
+    	v3.src = "../Imagenes/Corazon.png"; 
+    	
+    	v4 = new Image();
+    	v4.src = "../Imagenes/Corazon.png"; 
+    	
+    	v5 = new Image();
+    	v5.src = "../Imagenes/Corazon.png"; 
+    	
+    	v6 = new Image();
+    	v6.src = "../Imagenes/Corazon.png"; 
+    	
+    	
+    	tanq1 = new Image();
+    	tanq1.src = "../Imagenes/Tanque 1 Der.png"; 
+    	tanq2 = new Image();
+    	tanq2.src = "../Imagenes/Tanque 2 Izq.png"; 
+    	animan();
+    	
+    	}
+    	
+    function animan(){
+        
+        
+    	if(contV1 ==3 || contV2 == 3){
+    	    
+    	    vx = [400,435,470,900,935,970], vy = 110 , contV1 =0,contV2 =0;
+    	    
+    	    pos_x1 =400,pos_y1 =300,tanq1,Dx = [],Dy = [],Dd = [];
+    	    dirtanq1= 1,conttanq1 = 0;
+    	    
+    	    pos_x2 =950,pos_y2 =  300,tanq2;
+    	    dirtanq2 = 2,conttanq2 = 0;
+    	    
+    	    i = 0,k=0;
+    	}
+        
+    //Crea y Carga el canvas para poder mostrarlo
+    	context.clearRect(0,0,1200,600);
+    	fillBackground(context);
+    
+    
+    context.drawImage(v1,vx[0],vy);
+    context.drawImage(v2,vx[1],vy);
+    context.drawImage(v3,vx[2],vy);
+    context.drawImage(v4,vx[3],vy);
+    context.drawImage(v5,vx[4],vy);
+    context.drawImage(v6,vx[5],vy);
+    
+    
+    
+    	
+    //Llama al metodo movimiento para realizar los movimientos del tanque 1 
+  	movimiento = mover(dirtanq1,pos_x1,pos_y1,conttanq1);
+    
+    	pos_x1 = movimiento[0];
+		pos_y1 = movimiento[1];
+		dirtanq1 = movimiento[2];
+		conttanq1 = movimiento[3];
+    	
+   	context.drawImage(tanq1,pos_x1,pos_y1);
+    
+    //Llama al metodo movimiento para realizar los movimientos del tanque 2
+    	movimiento = mover(dirtanq2,pos_x2,pos_y2,conttanq2);
+    
+    	pos_x2 = movimiento[0];
+		pos_y2 = movimiento[1];
+		dirtanq2 = movimiento[2];
+		conttanq2 = movimiento[3];
+		
+		
+		
+
+    	context.drawImage(tanq2,pos_x2,pos_y2);
+	//Repite el metodo animan cada 0.11 segundos	
+		setTimeout(animan,0.1);
+		
+    	Disparo();
+    	
+    }
+		
+
+
+function Disparo(){
+    
+    
+    if( k > 25){
+        i = 0;
+        k = 0;
+        
+        
+    }
+       
+       
+        if(Dx[0]==null){
+           
+            Dx[i] = pos_x1;
+            Dy[i] = pos_y1;
+            Dd[i] = dirtanq1;
+            i++;
+            
+            
+        }else if( pos_y1 != Dy[i-1] && dirtanq1 == 1 && pos_x1 < pos_x2 ||pos_y1 != Dy[i-1] && dirtanq1 == 2 && pos_x1 > pos_x2 ){
+     
+     
+        Dx[i] = pos_x1;
+        Dy[i] = pos_y1;
+        Dd[i] = dirtanq1;
+        i++;
+        k++;
+        }else if( pos_y2 != Dy[i-1] && dirtanq2 == 1 && pos_x2 < pos_x1 ||pos_y2 != Dy[i-1] && dirtanq2 == 2 && pos_x2 > pos_x1 ){
+     
+     
+        Dx[i] = pos_x2;
+        Dy[i] = pos_y2;
+        Dd[i] = dirtanq2;
+        i++;
+        k++;
+        }
+        
+        if(Dx[0]==null){
+           
+            Dx[i] = pos_x1;
+            Dy[i] = pos_y1;
+            Dd[i] = dirtanq1;
+            i++;
+            
+            
+        }else if( pos_x1 != Dx[i-1] && dirtanq1 == 3 && pos_y1 < pos_y2 || pos_x1 != Dx[i-1] && dirtanq1 ==  4 && pos_y1 > pos_y2 ){
+     
+     
+        Dx[i] = pos_x1;
+        Dy[i] = pos_y1;
+        Dd[i] = dirtanq1;
+        i++;
+        k++;
+        }else if( pos_x2 != Dx[i-1] && dirtanq2 == 3 && pos_y2 < pos_y1 || pos_x2 != Dx[i-1] && dirtanq2 ==  4 && pos_y2 > pos_y1 ){
+     
+     
+        Dx[i] = pos_x2;
+        Dy[i] = pos_y2;
+        Dd[i] = dirtanq2;
+        i++;
+        k++;
+        }
+
+        
+        for(var j = 0; j < Dx.length; j++){ 
+            
+            if(Delimitar(Dd[j],Dx[j],Dy[j])){
+                Dx[j] = 500;
+                Dy[j] = 5000;
+                
+            }
+            
+            bala = new Image();
+            bala.src = "../Imagenes/Bala.png"; 
+                    
+    	   
+        switch(Dd[j]){
+            
+            case 1:
+                
+                
+                if((Dy[j] >= pos_y2 && Dy[j] < pos_y2 +25) && ( Dx[j] +40  >= pos_x2  && Dx[j] +40< pos_x2 + 25))
+                {
+                    
+                    switch(contV2){
+                        
+                        case 0:
+                            vx[5] = 10000;
+                            contV2++;
+                            break;
+                        case 1:
+                            vx[4] = 10000;
+                            contV2++;
+                            break;
+                        case 2:
+                            vx[3] = 10000;
+                            contV2++;
+                            alert("Jugador 1 gano el juego");
+                            break;
+                        
+                        
+                    }
+                    
+                    pos_x1 = 400;
+                    pos_y1 = 300;
+                    pos_x2 = 950;
+                    pos_y2 = 300;
+                    Dx.length = 0;
+                    Dy.length = 0;
+                    Dd.length = 0;
+                    i = 0;
+                    k=0
+                    
+                }else if((Dy[j] >= pos_y1 && Dy[j] < pos_y1 +25) && ( Dx[j] +40  >= pos_x1  && Dx[j] +40< pos_x1 + 25))
+                {
+                    
+                    switch(contV1){
+                        
+                        case 0:
+                            vx[2] = 10000;
+                            contV1++;
+                            break;
+                        case 1:
+                            vx[1] = 10000;
+                            contV1++;
+                            break;
+                        case 2:
+                            vx[0] = 10000;
+                            contV1++;
+                            alert("Jugador 2 gano el juego");
+                            break;
+                        }
+                
+                    
+                    pos_x1 = 400;
+                    pos_y1 = 300;
+                    pos_x2 = 950;
+                    pos_y2 = 300;
+                    Dx.length = 0;
+                    Dy.length = 0
+                    Dd.length = 0;
+                    i = 0;
+                    k=0
+                    
+                }else{
+                    
+                    context.drawImage(bala,Dx[j]+35,Dy[j] +15);
+                    Dx[j] = Dx[j]+2;
+                    
+                }
+                
+                break;
+            case 2:
+                
+    	        
+    	        
+                if((Dy[j] >= pos_y2 && Dy[j] < pos_y2 +25) && ( Dx[j] - 15 >= pos_x2  && Dx[j]- 15 < pos_x2 + 25))
+                {
+                    
+                    switch(contV2){
+                        
+                        case 0:
+                            vx[5] = 10000;
+                            contV2++;
+                            break;
+                        case 1:
+                            vx[4] = 10000;
+                            contV2++;
+                            break;
+                        case 2:
+                            vx[3] = 10000;
+                            contV2++;
+                            alert("Jugador 1 gano el juego");
+                            break;
+                    }
+                    
+                    pos_x1 = 400;
+                    pos_y1 = 300;
+                    pos_x2 = 950;
+                    pos_y2 = 300;
+                    Dx.length = 0;
+                    Dy.length = 0;
+                    Dd.length = 0;
+                    i = 0;
+                    k=0;
+                    
+                }else if((Dy[j] >= pos_y1 && Dy[j] < pos_y1 +25) && ( Dx[j] - 15 >= pos_x1  && Dx[j]- 15 < pos_x1 + 25))
+                {
+                    
+                    switch(contV1){
+                        
+                        case 0:
+                            vx[2] = 10000;
+                            contV1++;
+                            break;
+                        case 1:
+                            vx[1] = 10000;
+                            contV1++;
+                            break;
+                        case 2:
+                            vx[0] = 10000;
+                            contV1++;
+                            alert("Jugador 2 gano el juego");
+                            break;
+                        }
+                    
+                    pos_x1 = 400;
+                    pos_y1 = 300;
+                    pos_x2 = 950;
+                    pos_y2 = 300;
+                    Dx.length = 0;
+                    Dy.length = 0;
+                    Dd.length = 0;
+                    i = 0;
+                    k=0;
+                    
+                }else{
+                    
+                    context.drawImage(bala,Dx[j]-15,Dy[j]+10);
+                    Dx[j] = Dx[j]-2;
+                    
+                }
+                
+                break;
+            case 3:
+                
+                
+                
+                    if((Dx[j] >= pos_x2 && Dx[j] < pos_x2 +25) && ( Dy[j] + 25  >= pos_y2  && Dy[j]  + 25 < pos_y2 + 25))
+                {
+                    
+                    switch(contV2){
+                        
+                        case 0:
+                            vx[5] = 10000;
+                            contV2++;
+                            break;
+                        case 1:
+                            vx[4] = 10000;
+                            contV2++;
+                            break;
+                        case 2:
+                            vx[3] = 10000;
+                            contV2++;
+                            alert("Jugador 1 gano el juego");
+                            break;
+                        }
+                    pos_x1 = 400;
+                    pos_y1 = 300;
+                    pos_x2 = 950;
+                    pos_y2 = 300;
+                    Dx.length = 0;
+                    Dy.length = 0;
+                    Dd.length = 0;
+                    i = 0;
+                    k=0;
+                    
+                }else if((Dx[j] >= pos_x1 && Dx[j] < pos_x1 +25) && ( Dy[j] + 25  >= pos_y1  && Dy[j]  + 25 < pos_y1 + 25)   )
+                {
+                    
+                    switch(contV1){
+                        
+                        case 0:
+                            vx[2] = 10000;
+                            contV1++;
+                            break;
+                        case 1:
+                            vx[1] = 10000;
+                            contV1++;
+                            break;
+                        case 2:
+                            vx[0] = 10000;
+                            contV1++;
+                            alert("Jugador 2 gano el juego");
+                            break;
+                        }
+                    
+                    pos_x1 = 400;
+                    pos_y1 = 300;
+                    pos_x2 = 950;
+                    pos_y2 = 300;
+                    Dx.length = 0;
+                    Dy.length = 0;
+                    Dd.length = 0;
+                    i = 0;
+                    k=0;
+                    
+                }else{
+                    
+                    
+                    context.drawImage(bala,Dx[j]+10,Dy[j] + 30);
+                    Dy[j] = Dy[j]+2;
+                    
+                }
+                    
+                break;
+                
+            case 4:
+                
+                
+                
+                    if((Dx[j] >= pos_x2 && Dx[j] < pos_x2 +25) && ( Dy[j] - 5 >= pos_y2  && Dy[j]- 5 < pos_y2 + 25))
+                {
+                    
+                    switch(contV2){
+                        
+                        case 0:
+                            vx[5] = 10000;
+                            contV2++;
+                            break;
+                        case 1:
+                            vx[4] = 10000;
+                            contV2++;
+                            break;
+                        case 2:
+                            vx[3] = 10000;
+                            contV2++;
+                            alert("Jugador 1 gano el juego");
+                            break;
+                        }
+                        
+                    pos_x1 = 400;
+                    pos_y1 = 300;
+                    pos_x2 = 950;
+                    pos_y2 = 300;
+                    Dx.length = 0;
+                    Dy.length = 0;
+                    Dd.length = 0;
+                    i = 0;
+                    k=0;
+                    
+                }else if((Dx[j] >= pos_x1 && Dx[j] < pos_x1 +25) && ( Dy[j] - 5 >= pos_y1 && Dy[j]- 5 < pos_y1 + 25)  )
+                {
+                    
+                    
+                    switch(contV1){
+                        
+                        case 0:
+                            vx[2] = 10000;
+                            contV1++;
+                            break;
+                        case 1:
+                            vx[1] = 10000;
+                            contV1++;
+                            break;
+                        case 2:
+                            vx[0] = 10000;
+                            contV1++;
+                            alert("Jugador 2 gano el juego");
+                            break;
+                        }
+                    pos_x1 = 400;
+                    pos_y1 = 300;
+                    pos_x2 = 950;
+                    pos_y2 = 300;
+                    Dx.length = 0;
+                    Dy.length = 0;
+                    Dd.length = 0;
+                    i = 0;
+                    k=0;
+                    
+                }else{
+                    
+                    
+                    context.drawImage(bala,Dx[j]+10,Dy[j] - 10);
+                    Dy[j] = Dy[j]-2;
+                    
+                }
+                
+                
+                break;
+                
+        }
+        }
+        
+        
+        
+        
+        
+}
+
+function Delimitar(dirtanq,pos_x,pos_y) {
+	var Delimitacion = false;
+	
+	switch (dirtanq){
+			case 1:
+		        //Restringe el paso en la barra vertical hacia adelante del lado izq
+		        if(pos_x ==  438 && ( pos_y > 248 && pos_y < 380 )){
+		            Delimitacion = true;
+		        }
+		        //Restringe el paso en la barra horizontal hacia adelante del lado izq
+		        if(pos_x ==  397 && ( pos_y > 168 && pos_y < 205 )){
+		            
+		            Delimitacion = true;
+		        }
+		        if(pos_x ==  397 && ( pos_y > 418 && pos_y < 455 )){
+		                Delimitacion = true;
+		        }
+		        //Restringe el paso en la barra horizontal hacia adelante del lado der
+		            if(pos_x ==  838 && ( pos_y > 168 && pos_y < 205 )){
+		               Delimitacion = true;
+		         }
+		            if(pos_x ==  838 && ( pos_y > 418 && pos_y < 455 )){
+		            Delimitacion = true;
+		            }
+		        //Restringe el paso en la barra vertical hacia adelante del lado der
+		            if(pos_x ==  888 && ( pos_y > 248 && pos_y < 380 )){
+		            Delimitacion = true;
+		            }
+		        //Restringe el paso en las barras verticales hacia adelante del centro
+		            if(pos_x ==  668 && ( pos_y > 193 && pos_y < 300 )){
+		            Delimitacion = true;
+		            }
+		            if(pos_x ==  668 && ( pos_y > 318 && pos_y < 425 )){
+		            Delimitacion = true;
+		            }
+		            break;
+		case 2:
+		        //Restringe el paso en la barra vertical hacia atras del lado izq
+		        if(pos_x ==  475 && ( pos_y > 248 && pos_y < 380 )){
+		            Delimitacion = true;
+		            }
+		        //Restringe el paso en la barra horizontal hacia atrasdel lado izq
+		            if(pos_x ==  530 && ( pos_y > 168 && pos_y < 205 )){
+		            Delimitacion = true;
+		            }
+		            if(pos_x ==  530 && ( pos_y > 418 && pos_y < 455 )){
+		            Delimitacion = true;
+		            }
+		        //Restringe el paso en la barra horizontal hacia atras del lado der
+		            if(pos_x ==  970 && ( pos_y > 168 && pos_y < 205 )){
+		            Delimitacion = true;
+		            }
+		            if(pos_x ==  970 && ( pos_y > 418 && pos_y < 455 )){
+		            Delimitacion = true;
+		            }
+		        //Restringe el paso en la barra vertical hacia atras del lado der
+		            if(pos_x ==  925 && ( pos_y > 248 && pos_y < 380 )){
+		            Delimitacion = true;
+		            }
+			            
+		        //Restringe el paso en las barras verticales hacia atras del centro
+		            if(pos_x ==  720 && ( pos_y > 193 && pos_y < 300 )){
+		            Delimitacion = true;
+		            }
+		            if(pos_x ==  720 && ( pos_y > 318 && pos_y < 425 )){
+		            Delimitacion = true;
+		            }
+		            break;
+		    case 3:
+		        //Restringe el paso en las barras horizontales hacia abajo del lado izq
+		        if(pos_y ==  168 && ( pos_x > 398 && pos_x < 530 )){
+		            Delimitacion = true;
+		            }
+		            
+		        if(pos_y ==  417 && ( pos_x > 398 && pos_x < 530 )){
+		            Delimitacion = true;
+		            }
+		            
+		        //Restringe el paso en las barras horizontales hacia abajo del lado der
+		        if(pos_y ==  168 && ( pos_x > 835 && pos_x < 970 )){
+		            Delimitacion = true;
+		            }
+		            
+		        if(pos_y ==  417 && ( pos_x > 835 && pos_x < 970 )){
+		            Delimitacion = true;
+		            }
+		        //Restringe el paso en las barras verticales hacia abajo del centro
+		           if(pos_y ==  194 && ( pos_x > 665 && pos_x < 720 )){
+		            Delimitacion = true;
+		            }
+		            if(pos_y ==  318 && ( pos_x > 665 && pos_x < 720 )){
+		            Delimitacion = true;
+		            }
+		            break;
+		    case 4:
+		        //Restringe el paso en las barras horizontales hacia arriba del lado izq
+		        if(pos_y ==  205 && ( pos_x > 398 && pos_x < 530 )){
+		            Delimitacion = true;
+		            }
+		            
+		        if(pos_y ==  455 && ( pos_x > 398 && pos_x < 530 )){
+		            Delimitacion = true;
+		            }
+		        //Restringe el paso en las barras horizontales hacia arriba del lado der
+		        if(pos_y ==  205 && ( pos_x > 835 && pos_x < 970 )){
+		            Delimitacion = true;
+		            }
+		            
+		        if(pos_y ==  455 && ( pos_x > 835 && pos_x < 970 )){
+		            Delimitacion = true;
+		            }
+		        
+		        //Restringe el paso en las barras verticales hacia arriba del centro
+		           if(pos_y ==  300 && ( pos_x > 665 && pos_x < 720 )){
+			        Delimitacion = true;
+		               }
+			        if(pos_y ==  425 && ( pos_x > 665 && pos_x < 720 )){
+			        Delimitacion = true;
+		               }
+			           break;
+			          }
+			    //Delimita los bordes del juego      
+			          if(pos_x == 1000 ){
+			   	    Delimitacion = true;
+		            }else if(pos_x == 370 ){
+				    Delimitacion = true;
+		            }
+				
+					if(pos_y == 470 ){
+				    Delimitacion = true;
+		            
+					}else if(pos_y == 160 ){
+				    Delimitacion = true;
+		            	}
+		            	
+		         return Delimitacion;
+	
+}
+
+
+</script>
+    </body>
